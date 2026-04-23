@@ -8,7 +8,7 @@ window.SITE_CONTENT = {
     classOf: 2028,
     pronouns: "he/him",
     initials: "VR",
-    photo: "", // Drop a square headshot at ./assets/veera.jpg and set "./assets/veera.jpg"
+    photo: "./veera.jpg",
   },
   hero: {
     eyebrow: { dot: true, text: "Open for Summer 2027 internships · Finance · Analytics · Consulting" },

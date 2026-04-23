@@ -302,7 +302,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   gap: 18px;
 }
 .id-photo {
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 1 / 1;
   border-radius: 10px;
   background:
     radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
@@ -312,6 +312,11 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   background-position: center;
   position: relative;
   overflow: hidden;
+}
+.id-photo.has-photo {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .id-photo::after {
   content: attr(data-initials);
