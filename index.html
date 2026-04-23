@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0d12" />
+    <title>Veera Ravichandran</title>
+    <meta name="description" content="Veera Ravichandran — engineer, builder, problem solver." />
+    <meta property="og:title" content="Veera Ravichandran" />
+    <meta property="og:description" content="Engineer, builder, problem solver." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0d12'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' font-family='Inter,system-ui,sans-serif' font-size='28' font-weight='700' fill='%23a78bfa'%3EV%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <canvas id="bg" aria-hidden="true"></canvas>
+
+    <header class="nav" id="nav">
+      <a class="brand" href="#top" aria-label="Home">
+        <span class="brand-mark">V</span>
+        <span class="brand-name" data-bind="nav.brand"></span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-inner">
+          <p class="eyebrow reveal" data-bind="hero.eyebrow"></p>
+          <h1 class="title reveal">
+            <span data-bind="hero.firstName"></span>
+            <span class="accent" data-bind="hero.lastName"></span>
+          </h1>
+          <p class="lede reveal" data-bind="hero.tagline"></p>
+          <div class="cta-row reveal">
+            <a class="btn btn-primary" data-bind-href="hero.primaryCta.href" data-bind="hero.primaryCta.label"></a>
+            <a class="btn btn-ghost" data-bind-href="hero.secondaryCta.href" data-bind="hero.secondaryCta.label"></a>
+          </div>
+          <ul class="socials reveal" id="socials" aria-label="Social links"></ul>
+        </div>
+        <div class="scroll-hint reveal" aria-hidden="true">
+          <span>Scroll</span>
+          <span class="scroll-bar"></span>
+        </div>
+      </section>
+
+      <section id="about" class="section">
+        <div class="section-head reveal">
+          <span class="section-num">01</span>
+          <h2>About</h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-body reveal">
+            <p data-bind="about.paragraph1"></p>
+            <p data-bind="about.paragraph2"></p>
+          </div>
+          <aside class="about-card reveal">
+            <dl id="aboutFacts"></dl>
+          </aside>
+        </div>
+      </section>
+
+      <section id="experience" class="section">
+        <div class="section-head reveal">
+          <span class="section-num">02</span>
+          <h2>Experience</h2>
+        </div>
+        <ol class="timeline" id="timeline"></ol>
+      </section>
+
+      <section id="projects" class="section">
+        <div class="section-head reveal">
+          <span class="section-num">03</span>
+          <h2>Projects</h2>
+        </div>
+        <div class="project-grid" id="projects-grid"></div>
+      </section>
+
+      <section id="skills" class="section">
+        <div class="section-head reveal">
+          <span class="section-num">04</span>
+          <h2>Skills</h2>
+        </div>
+        <div class="skills-grid" id="skillsGrid"></div>
+      </section>
+
+      <section id="contact" class="section section-contact">
+        <div class="section-head reveal">
+          <span class="section-num">05</span>
+          <h2>Get in touch</h2>
+        </div>
+        <div class="contact-card reveal">
+          <p data-bind="contact.blurb"></p>
+          <div class="contact-actions" id="contactActions"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span data-bind="footer.copyright"></span>
+      <span class="footer-dot">·</span>
+      <a data-bind-href="footer.repoHref" data-bind="footer.repoLabel"></a>
+    </footer>
+
+    <script src="./content.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>
