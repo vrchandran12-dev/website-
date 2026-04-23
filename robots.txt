@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://vrchandran12-dev.github.io/website-/sitemap.xml

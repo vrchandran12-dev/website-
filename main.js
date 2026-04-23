@@ -2,8 +2,12 @@
   const C = window.SITE_CONTENT;
   if (!C) return;
 
-  // ---- Bind text/href by data attribute ----
-  const get = (path) => path.split(".").reduce((a, k) => (a ? a[k] : undefined), C);
+  const get = (path) => path.split(".").reduce((a, k) => (a == null ? a : a[k]), C);
+  const esc = (s) =>
+    String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const escAttr = esc;
+
+  // ---- Bind text/href ----
   document.querySelectorAll("[data-bind]").forEach((el) => {
     const v = get(el.getAttribute("data-bind"));
     if (v != null) el.textContent = v;
@@ -13,113 +17,193 @@
     if (v != null) el.setAttribute("href", v);
   });
 
-  // ---- Socials ----
-  const socials = document.getElementById("socials");
-  if (socials && Array.isArray(C.socials)) {
-    socials.innerHTML = C.socials
+  // ---- Display headline (word-by-word reveal) ----
+  const headline = document.getElementById("displayHeadline");
+  if (headline && Array.isArray(C.hero.headline)) {
+    headline.innerHTML = C.hero.headline
+      .map((w, i) => `<span class="word${i === C.hero.headline.length - 1 ? " accent" : ""}">${esc(w)}</span>`)
+      .join(" ");
+  }
+
+  // ---- Hero ID photo ----
+  const idPhoto = document.getElementById("idPhoto");
+  if (idPhoto) {
+    idPhoto.setAttribute("data-initials", C.meta.initials || "");
+    if (C.meta.photo) {
+      idPhoto.style.backgroundImage = `url("${C.meta.photo}")`;
+      idPhoto.classList.add("has-photo");
+    }
+  }
+
+  // ---- Hero socials (small chips inside id card) ----
+  const heroSocials = document.getElementById("heroSocials");
+  if (heroSocials && Array.isArray(C.socials)) {
+    heroSocials.innerHTML = C.socials
+      .map((s) => `<a href="${escAttr(s.href)}" target="_blank" rel="noopener">${esc(s.label)} →</a>`)
+      .join("");
+  }
+
+  // ---- Ticker ----
+  const ticker = document.getElementById("tickerTrack");
+  if (ticker && Array.isArray(C.ticker)) {
+    const items = C.ticker
+      .map((t) => `<span class="ticker-item">${esc(t)}</span>`)
+      .join("");
+    // duplicate for seamless loop
+    ticker.innerHTML = items + items;
+  }
+
+  // ---- At-a-glance strip ----
+  const glance = document.getElementById("glanceStrip");
+  if (glance && Array.isArray(C.glance)) {
+    glance.innerHTML = C.glance
       .map(
-        (s) =>
-          `<li><a href="${escapeAttr(s.href)}" target="_blank" rel="noopener">↗ ${escapeHtml(s.label)}</a></li>`
+        (g) => `
+      <div class="glance">
+        <div class="glance-num" data-count="${g.value}">${esc(g.value)}${esc(g.suffix || "")}</div>
+        <div class="glance-label">${esc(g.label)}</div>
+        <div class="glance-note">${esc(g.note || "")}</div>
+      </div>`
       )
       .join("");
   }
 
-  // ---- About facts ----
-  const aboutFacts = document.getElementById("aboutFacts");
-  if (aboutFacts && C.about?.facts) {
-    aboutFacts.innerHTML = C.about.facts
-      .map((f) => `<div><dt>${escapeHtml(f.label)}</dt><dd>${escapeHtml(f.value)}</dd></div>`)
-      .join("");
+  // ---- About body paragraphs ----
+  const aboutBody = document.getElementById("aboutBody");
+  if (aboutBody && Array.isArray(C.about.body)) {
+    aboutBody.innerHTML = C.about.body.map((p) => `<p>${esc(p)}</p>`).join("");
   }
 
-  // ---- Timeline ----
-  const timeline = document.getElementById("timeline");
-  if (timeline && Array.isArray(C.experience)) {
-    timeline.innerHTML = C.experience
+  // ---- Experience timeline ----
+  const tl = document.getElementById("timeline");
+  if (tl && Array.isArray(C.experience)) {
+    tl.innerHTML = C.experience
       .map(
         (e) => `
       <li class="t-item reveal">
         <div class="t-meta">
-          <span>${escapeHtml(e.dates || "")}</span>
+          <span>${esc(e.dates || "")}</span>
+          ${e.location ? `<span>${esc(e.location)}</span>` : ""}
+          ${e.type ? `<span class="t-meta-type">${esc(e.type)}</span>` : ""}
         </div>
-        <h3 class="t-role">${escapeHtml(e.role || "")} ${
-          e.org
-            ? `<span class="t-org">· ${
-                e.orgHref
-                  ? `<a href="${escapeAttr(e.orgHref)}" target="_blank" rel="noopener">${escapeHtml(e.org)}</a>`
-                  : escapeHtml(e.org)
-              }</span>`
-            : ""
-        }</h3>
-        ${e.summary ? `<p class="t-summary">${escapeHtml(e.summary)}</p>` : ""}
-        ${
-          Array.isArray(e.tags) && e.tags.length
-            ? `<div class="t-tags">${e.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>`
-            : ""
-        }
+        <div>
+          <h3 class="t-role">${esc(e.role || "")}</h3>
+          ${
+            e.org
+              ? e.orgHref
+                ? `<a class="t-org" href="${escAttr(e.orgHref)}" target="_blank" rel="noopener">${esc(e.org)}</a>`
+                : `<span class="t-org">${esc(e.org)}</span>`
+              : ""
+          }
+          ${
+            Array.isArray(e.bullets) && e.bullets.length
+              ? `<ul class="t-bullets">${e.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>`
+              : ""
+          }
+          ${
+            Array.isArray(e.tags) && e.tags.length
+              ? `<div class="t-tags">${e.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>`
+              : ""
+          }
+        </div>
       </li>`
       )
       .join("");
   }
 
-  // ---- Education & Certifications ----
-  const grid = document.getElementById("education-grid");
-  if (grid && Array.isArray(C.education)) {
-    grid.innerHTML = C.education
+  // ---- Education ----
+  const edu = document.getElementById("eduCard");
+  if (edu && C.education) {
+    const e = C.education;
+    edu.innerHTML = `
+      <div>
+        <h3 class="edu-school">${esc(e.school)}</h3>
+        <p class="edu-degree">${esc(e.degree)}</p>
+        ${e.minor ? `<p class="edu-minor">${esc(e.minor)}</p>` : ""}
+        <p class="edu-dates">${esc(e.dates)}</p>
+        <p class="edu-summary">${esc(e.summary)}</p>
+      </div>
+      <div class="edu-coursework">
+        <h4>Selected coursework</h4>
+        <ul class="edu-courses">${(e.coursework || []).map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+      </div>
+    `;
+  }
+
+  // ---- Cases ----
+  const cases = document.getElementById("casesGrid");
+  if (cases && Array.isArray(C.cases)) {
+    cases.innerHTML = C.cases
       .map(
-        (p) => `
-      <article class="project reveal">
-        <h3>${escapeHtml(p.title || "")}</h3>
-        ${p.subtitle ? `<p class="project-subtitle">${escapeHtml(p.subtitle)}</p>` : ""}
-        ${p.meta ? `<p class="project-meta">${escapeHtml(p.meta)}</p>` : ""}
-        ${
-          Array.isArray(p.tags) && p.tags.length
-            ? `<div class="project-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>`
-            : ""
-        }
-        <p>${escapeHtml(p.description || "")}</p>
-        ${
-          Array.isArray(p.links) && p.links.length
-            ? `<div class="project-links">${p.links
-                .map(
-                  (l) => `<a href="${escapeAttr(l.href)}" target="_blank" rel="noopener">${escapeHtml(l.label)} →</a>`
-                )
-                .join("")}</div>`
-            : ""
-        }
+        (c) => `
+      <article class="case reveal">
+        <div class="case-sponsor">${esc(c.sponsor)}</div>
+        <h3 class="case-title">${esc(c.title)}</h3>
+        <div class="case-meta">${esc(c.provider)} · Issued ${esc(c.issued)} · Credential ${esc(c.credential)}</div>
+        <dl>
+          <div><dt>Problem</dt><dd>${esc(c.problem)}</dd></div>
+          <div><dt>Approach</dt><dd>${esc(c.approach)}</dd></div>
+        </dl>
+        <div class="case-tools">${(c.tools || []).map((t) => `<span>${esc(t)}</span>`).join("")}</div>
       </article>`
       )
       .join("");
   }
 
-  // ---- Skills ----
+  // ---- Skills (with proficiency dots) ----
   const skills = document.getElementById("skillsGrid");
   if (skills && Array.isArray(C.skills)) {
     skills.innerHTML = C.skills
       .map(
         (s) => `
       <div class="skill-cluster reveal">
-        <h3>${escapeHtml(s.group)}</h3>
-        <ul>${s.items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>
+        <h3>${esc(s.group)}</h3>
+        ${s.items
+          .map((it) => {
+            const lvl = Math.max(0, Math.min(5, it.level || 0));
+            const dots = Array.from({ length: 5 }, (_, i) => `<span class="skill-dot${i < lvl ? " on" : ""}"></span>`).join("");
+            return `<div class="skill-row"><span class="skill-name">${esc(it.name)}</span><span class="skill-bar" aria-label="${lvl} of 5">${dots}</span></div>`;
+          })
+          .join("")}
       </div>`
       )
       .join("");
   }
 
-  // ---- Contact ----
-  const contact = document.getElementById("contactActions");
-  if (contact && Array.isArray(C.contact?.actions)) {
-    contact.innerHTML = C.contact.actions
+  // ---- Themes ----
+  const themes = document.getElementById("themesGrid");
+  if (themes && C.themes && Array.isArray(C.themes.items)) {
+    themes.innerHTML = C.themes.items
       .map(
-        (a) =>
-          `<a class="btn ${a.primary ? "btn-primary" : "btn-ghost"}" href="${escapeAttr(
-            a.href
-          )}" target="_blank" rel="noopener">${escapeHtml(a.label)}</a>`
+        (t) => `
+      <article class="theme reveal">
+        <h3>${esc(t.title)}</h3>
+        <p>${esc(t.body)}</p>
+      </article>`
       )
       .join("");
   }
 
-  // ---- Reveal on scroll ----
+  // ---- Availability ----
+  const av = document.getElementById("availabilityList");
+  if (av && C.availability && Array.isArray(C.availability.items)) {
+    av.innerHTML = C.availability.items
+      .map((i) => `<div><dt>${esc(i.label)}</dt><dd>${esc(i.value)}</dd></div>`)
+      .join("");
+  }
+
+  // ---- Contact ----
+  const cr = document.getElementById("contactRow");
+  if (cr && C.contact && Array.isArray(C.socials)) {
+    cr.innerHTML = C.socials
+      .map(
+        (s) =>
+          `<a class="btn ${s.primary ? "btn-primary" : "btn-ghost"}" href="${escAttr(s.href)}" target="_blank" rel="noopener">${esc(s.label)}</a>`
+      )
+      .join("");
+  }
+
+  // ---- Reveal observer ----
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
@@ -129,130 +213,70 @@
         }
       });
     },
-    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
   );
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
+  // ---- Headline word reveal (delayed slightly so it lands after first paint) ----
+  requestAnimationFrame(() => {
+    setTimeout(() => headline?.classList.add("played"), 80);
+  });
+
+  // ---- Counter animation for at-a-glance ----
+  const counterIO = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseInt(el.getAttribute("data-count"), 10);
+        const suffix = (el.textContent.match(/[^\d.-]+$/) || [""])[0];
+        if (Number.isNaN(target)) return;
+        const dur = 1000;
+        const start = performance.now();
+        const from = 0;
+        function tick(now) {
+          const t = Math.min(1, (now - start) / dur);
+          const eased = 1 - Math.pow(1 - t, 3);
+          const v = Math.round(from + (target - from) * eased);
+          el.textContent = v + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        counterIO.unobserve(el);
+      });
+    },
+    { threshold: 0.4 }
+  );
+  document.querySelectorAll(".glance-num").forEach((el) => counterIO.observe(el));
+
   // ---- Sticky nav border ----
   const nav = document.getElementById("nav");
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 4);
+  const onScroll = () => nav?.classList.toggle("scrolled", window.scrollY > 4);
   document.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
   // ---- Theme toggle ----
-  const themeKey = "site-theme";
-  const setTheme = (t) => {
+  const themeKey = "veera-site-theme";
+  const apply = (t) => {
     document.documentElement.setAttribute("data-theme", t);
     try { localStorage.setItem(themeKey, t); } catch (_) {}
   };
   let stored = null;
   try { stored = localStorage.getItem(themeKey); } catch (_) {}
-  if (stored === "light" || stored === "dark") setTheme(stored);
+  if (stored === "dark" || stored === "light") apply(stored);
+  else if (matchMedia("(prefers-color-scheme: dark)").matches) apply("dark");
   document.getElementById("themeToggle")?.addEventListener("click", () => {
-    const cur = document.documentElement.getAttribute("data-theme") || "dark";
-    setTheme(cur === "light" ? "dark" : "light");
-    drawBg();
+    const cur = document.documentElement.getAttribute("data-theme") || "light";
+    apply(cur === "dark" ? "light" : "dark");
   });
 
-  // ---- Animated gradient background ----
-  const canvas = document.getElementById("bg");
-  const ctx = canvas?.getContext("2d");
-  let blobs = [];
-  let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
-  let raf = 0;
-  function resize() {
-    if (!canvas) return;
-    canvas.width = Math.floor(window.innerWidth * dpr);
-    canvas.height = Math.floor(window.innerHeight * dpr);
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
-  }
-  function makeBlobs() {
-    const colors = readAccentColors();
-    blobs = colors.map((c, i) => ({
-      x: Math.random(),
-      y: Math.random(),
-      r: 0.32 + Math.random() * 0.18,
-      vx: (Math.random() - 0.5) * 0.00018,
-      vy: (Math.random() - 0.5) * 0.00018,
-      color: c,
-      phase: i,
-    }));
-  }
-  function readAccentColors() {
-    const cs = getComputedStyle(document.documentElement);
-    return [
-      cs.getPropertyValue("--accent").trim(),
-      cs.getPropertyValue("--accent-2").trim(),
-      cs.getPropertyValue("--accent-warm").trim(),
-    ].filter(Boolean);
-  }
-  function drawBg() {
-    if (!ctx) return;
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-    blobs.forEach((b) => {
-      const cx = b.x * W;
-      const cy = b.y * H;
-      const rad = Math.min(W, H) * b.r;
-      const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
-      grd.addColorStop(0, hexToRgba(b.color, 0.55));
-      grd.addColorStop(1, hexToRgba(b.color, 0));
-      ctx.fillStyle = grd;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rad, 0, Math.PI * 2);
-      ctx.fill();
-    });
-  }
-  function step(t) {
-    blobs.forEach((b) => {
-      b.x += b.vx + Math.sin(t * 0.0002 + b.phase) * 0.0004;
-      b.y += b.vy + Math.cos(t * 0.00018 + b.phase) * 0.0004;
-      if (b.x < -0.2 || b.x > 1.2) b.vx *= -1;
-      if (b.y < -0.2 || b.y > 1.2) b.vy *= -1;
-    });
-    drawBg();
-    raf = requestAnimationFrame(step);
-  }
-  function hexToRgba(hex, a) {
-    const m = hex.replace("#", "");
-    if (m.length === 3) {
-      const r = parseInt(m[0] + m[0], 16),
-        g = parseInt(m[1] + m[1], 16),
-        b = parseInt(m[2] + m[2], 16);
-      return `rgba(${r},${g},${b},${a})`;
-    }
-    if (m.length === 6) {
-      const r = parseInt(m.slice(0, 2), 16),
-        g = parseInt(m.slice(2, 4), 16),
-        b = parseInt(m.slice(4, 6), 16);
-      return `rgba(${r},${g},${b},${a})`;
-    }
-    return hex;
-  }
-  if (canvas) {
-    resize();
-    makeBlobs();
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      raf = requestAnimationFrame(step);
-    } else {
-      drawBg();
-    }
-    window.addEventListener("resize", () => {
-      cancelAnimationFrame(raf);
-      resize();
-      makeBlobs();
-      raf = requestAnimationFrame(step);
-    });
-  }
-
-  // After dynamic content is rendered, pick up new .reveal nodes
-  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-
-  function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  }
-  function escapeAttr(s) {
-    return escapeHtml(s);
-  }
+  // ---- Easter egg for any dev recruiter who opens devtools ----
+  try {
+    const css = "color:#d9b75a;font:600 14px/1.4 ui-sans-serif,system-ui";
+    console.log("%cHi.", css);
+    console.log(
+      "%cBuilt by Veera Ravichandran. Open to Summer 2027 internships in finance / analytics / consulting.\nSource: https://github.com/vrchandran12-dev/website-",
+      "color:#5a6478;font:13px ui-sans-serif,system-ui"
+    );
+  } catch (_) {}
 })();

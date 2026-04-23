@@ -3,116 +3,189 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b0d12" />
-    <title>Veera Ravichandran — Financial Economics, Binghamton</title>
-    <meta name="description" content="Veera Ravichandran — Financial Economics student at Binghamton University. Open to internships in finance, analytics, and consulting." />
-    <meta property="og:title" content="Veera Ravichandran" />
-    <meta property="og:description" content="Financial Economics at Binghamton. Open to internships in finance, analytics, and consulting." />
-    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0a0e1a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fbfaf6" media="(prefers-color-scheme: light)" />
+    <title>Veera Ravichandran — Financial Economics, Binghamton University</title>
+    <meta name="description" content="Veera Ravichandran — Financial Economics sophomore at Binghamton University. Open to Summer 2027 internships in finance, analytics, and consulting." />
+    <meta property="og:title" content="Veera Ravichandran — Financial Economics, Binghamton" />
+    <meta property="og:description" content="Sophomore at Binghamton University focused on finance, modeling, and data. Open to Summer 2027 internships." />
+    <meta property="og:type" content="profile" />
     <meta property="og:url" content="https://vrchandran12-dev.github.io/website-/" />
+    <meta property="og:image" content="https://vrchandran12-dev.github.io/website-/og.svg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0d12'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' font-family='Inter,system-ui,sans-serif' font-size='28' font-weight='700' fill='%23a78bfa'%3EV%3C/text%3E%3C/svg%3E" />
-    <link rel="preconnect" href="https://rsms.me/" />
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="canonical" href="https://vrchandran12-dev.github.io/website-/" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0e1a'/%3E%3Ctext x='50%25' y='58%25' text-anchor='middle' font-family='Georgia,serif' font-size='30' font-weight='700' fill='%23d9b75a'%3EVR%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
     <link rel="stylesheet" href="./styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Veera Ravichandran",
+        "url": "https://vrchandran12-dev.github.io/website-/",
+        "sameAs": [
+          "https://www.linkedin.com/in/veeraravichandran/",
+          "https://github.com/vrchandran12-dev"
+        ],
+        "jobTitle": "Financial Economics Student",
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "Binghamton University"
+        }
+      }
+    </script>
   </head>
   <body>
-    <canvas id="bg" aria-hidden="true"></canvas>
+    <a class="skip" href="#main">Skip to content</a>
 
     <header class="nav" id="nav">
-      <a class="brand" href="#top" aria-label="Home">
-        <span class="brand-mark">V</span>
-        <span class="brand-name" data-bind="nav.brand"></span>
+      <a class="brand" href="#top" aria-label="Top">
+        <span class="brand-mark" data-bind="meta.initials"></span>
+        <span class="brand-name">
+          <span data-bind="meta.name"></span>
+          <small data-bind="meta.role"></small>
+        </span>
       </a>
       <nav class="nav-links" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#experience">Experience</a>
-        <a href="#education">Education</a>
-        <a href="#skills">Skills</a>
-        <a href="#contact">Contact</a>
+        <a href="#about"><span class="nav-num">01</span>About</a>
+        <a href="#experience"><span class="nav-num">02</span>Experience</a>
+        <a href="#education"><span class="nav-num">03</span>Education</a>
+        <a href="#cases"><span class="nav-num">04</span>Case Work</a>
+        <a href="#availability"><span class="nav-num">05</span>For Recruiters</a>
       </nav>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
-        <span class="theme-icon" aria-hidden="true">◐</span>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme" title="Toggle theme">
+        <span class="theme-sun" aria-hidden="true">☀</span>
+        <span class="theme-moon" aria-hidden="true">☾</span>
       </button>
     </header>
 
-    <main id="top">
-      <section class="hero">
-        <div class="hero-inner">
-          <p class="eyebrow reveal" data-bind="hero.eyebrow"></p>
-          <h1 class="title reveal">
-            <span data-bind="hero.firstName"></span>
-            <span class="accent" data-bind="hero.lastName"></span>
-          </h1>
-          <p class="lede reveal" data-bind="hero.tagline"></p>
-          <div class="cta-row reveal">
-            <a class="btn btn-primary" data-bind-href="hero.primaryCta.href" data-bind="hero.primaryCta.label"></a>
-            <a class="btn btn-ghost" data-bind-href="hero.secondaryCta.href" data-bind="hero.secondaryCta.label"></a>
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <p class="eyebrow reveal">
+              <span class="eyebrow-dot" aria-hidden="true"></span>
+              <span data-bind="hero.eyebrow.text"></span>
+            </p>
+            <p class="overline reveal" data-bind="hero.overline"></p>
+            <h1 class="display reveal" id="displayHeadline"></h1>
+            <p class="hero-sub reveal" data-bind="hero.sub"></p>
+            <div class="hero-cta reveal">
+              <a class="btn btn-primary" data-bind-href="hero.primaryCta.href" data-bind="hero.primaryCta.label"></a>
+              <a class="btn btn-ghost" data-bind-href="hero.secondaryCta.href" data-bind="hero.secondaryCta.label"></a>
+            </div>
           </div>
-          <ul class="socials reveal" id="socials" aria-label="Social links"></ul>
+          <aside class="hero-right reveal">
+            <div class="card-id">
+              <div class="id-photo" id="idPhoto" aria-hidden="true"></div>
+              <dl class="id-meta">
+                <div><dt>Name</dt><dd data-bind="meta.name"></dd></div>
+                <div><dt>Studying</dt><dd data-bind="meta.role"></dd></div>
+                <div><dt>Class of</dt><dd data-bind="meta.classOf"></dd></div>
+                <div><dt>Available</dt><dd data-bind="meta.availability"></dd></div>
+                <div><dt>Location</dt><dd data-bind="meta.location"></dd></div>
+              </dl>
+              <div class="id-socials" id="heroSocials"></div>
+            </div>
+          </aside>
         </div>
-        <div class="scroll-hint reveal" aria-hidden="true">
-          <span>Scroll</span>
-          <span class="scroll-bar"></span>
+        <div class="ticker" aria-hidden="true">
+          <div class="ticker-track" id="tickerTrack"></div>
         </div>
       </section>
 
+      <section class="strip" aria-label="At a glance">
+        <div class="strip-inner" id="glanceStrip"></div>
+      </section>
+
       <section id="about" class="section">
-        <div class="section-head reveal">
+        <header class="section-head reveal">
           <span class="section-num">01</span>
-          <h2>About</h2>
-        </div>
+          <h2 class="section-title">About</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </header>
         <div class="about-grid">
-          <div class="about-body reveal">
-            <p data-bind="about.paragraph1"></p>
-            <p data-bind="about.paragraph2"></p>
-          </div>
-          <aside class="about-card reveal">
-            <dl id="aboutFacts"></dl>
-          </aside>
+          <p class="about-lede reveal" data-bind="about.lede"></p>
+          <div class="about-body reveal" id="aboutBody"></div>
         </div>
       </section>
 
       <section id="experience" class="section">
-        <div class="section-head reveal">
+        <header class="section-head reveal">
           <span class="section-num">02</span>
-          <h2>Experience</h2>
-        </div>
+          <h2 class="section-title">Experience</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </header>
         <ol class="timeline" id="timeline"></ol>
       </section>
 
       <section id="education" class="section">
-        <div class="section-head reveal">
+        <header class="section-head reveal">
           <span class="section-num">03</span>
-          <h2>Education &amp; Certifications</h2>
-        </div>
-        <div class="project-grid" id="education-grid"></div>
+          <h2 class="section-title">Education</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </header>
+        <div class="edu reveal" id="eduCard"></div>
+      </section>
+
+      <section id="cases" class="section">
+        <header class="section-head reveal">
+          <span class="section-num">04</span>
+          <h2 class="section-title">Case Work</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </header>
+        <p class="section-intro reveal">
+          Industry job simulations completed through Forage. Each one was a structured case from a sponsor firm —
+          framed problem, real artifacts, executive-style deliverable.
+        </p>
+        <div class="cases-grid" id="casesGrid"></div>
       </section>
 
       <section id="skills" class="section">
-        <div class="section-head reveal">
-          <span class="section-num">04</span>
-          <h2>Skills</h2>
-        </div>
+        <header class="section-head reveal">
+          <span class="section-num">05</span>
+          <h2 class="section-title">Skills</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </header>
         <div class="skills-grid" id="skillsGrid"></div>
       </section>
 
+      <section id="themes" class="section">
+        <header class="section-head reveal">
+          <span class="section-num">06</span>
+          <h2 class="section-title">What I'm following</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </header>
+        <p class="section-intro reveal" data-bind="themes.intro"></p>
+        <div class="themes-grid" id="themesGrid"></div>
+      </section>
+
+      <section id="availability" class="section section-recruiter">
+        <header class="section-head reveal">
+          <span class="section-num">07</span>
+          <h2 class="section-title">For recruiters</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </header>
+        <p class="section-intro reveal" data-bind="availability.intro"></p>
+        <dl class="availability" id="availabilityList"></dl>
+      </section>
+
       <section id="contact" class="section section-contact">
-        <div class="section-head reveal">
-          <span class="section-num">05</span>
-          <h2>Get in touch</h2>
-        </div>
         <div class="contact-card reveal">
-          <p data-bind="contact.blurb"></p>
-          <div class="contact-actions" id="contactActions"></div>
+          <p class="contact-eyebrow">CONTACT</p>
+          <h2 class="contact-headline" data-bind="contact.headline"></h2>
+          <p class="contact-body" data-bind="contact.body"></p>
+          <div class="contact-row" id="contactRow"></div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <span data-bind="footer.copyright"></span>
-      <span class="footer-dot">·</span>
-      <a data-bind-href="footer.repoHref" data-bind="footer.repoLabel"></a>
+      <span data-bind="footer.line"></span>
+      <span class="footer-dot" aria-hidden="true">·</span>
+      <a data-bind-href="footer.repoHref" data-bind="footer.repoLabel" target="_blank" rel="noopener"></a>
     </footer>
 
     <script src="./content.js"></script>

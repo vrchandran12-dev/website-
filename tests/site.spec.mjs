@@ -10,84 +10,99 @@ for (const vp of VIEWPORTS) {
   test.describe(`viewport: ${vp.name}`, () => {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
-    test("renders without console errors and has expected sections", async ({ page }) => {
+    test("renders cleanly with finance-tailored content", async ({ page }) => {
       const consoleErrors = [];
-      page.on("console", (msg) => {
-        if (msg.type() === "error") consoleErrors.push(msg.text());
-      });
+      page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text()));
       page.on("pageerror", (err) => consoleErrors.push(`pageerror: ${err.message}`));
-
       const failedRequests = [];
-      page.on("requestfailed", (req) =>
-        failedRequests.push(`${req.url()} :: ${req.failure()?.errorText}`)
+      page.on("requestfailed", (r) =>
+        failedRequests.push(`${r.url()} :: ${r.failure()?.errorText}`)
       );
 
       await page.goto("/", { waitUntil: "networkidle" });
 
-      await expect(page).toHaveTitle(/Veera Ravichandran/i);
-      await expect(page.locator(".title")).toContainText("Veera");
-      await expect(page.locator("#about")).toBeVisible();
-      await expect(page.locator("#experience")).toBeVisible();
-      await expect(page.locator("#education")).toBeVisible();
-      await expect(page.locator("#skills")).toBeVisible();
-      await expect(page.locator("#contact")).toBeVisible();
+      // Title + meta
+      await expect(page).toHaveTitle(/Veera Ravichandran/);
+      // Hero structure
+      await expect(page.locator("#displayHeadline .word").first()).toBeVisible();
+      await expect(page.locator(".hero-sub")).toContainText(/Financial Economics/);
+      // ID card
+      await expect(page.locator(".card-id")).toBeVisible();
+      await expect(page.locator(".id-meta")).toContainText("Binghamton");
 
-      // Dynamic sections actually rendered (content.js ran)
+      // Sections present
+      for (const id of ["about", "experience", "education", "cases", "skills", "themes", "availability", "contact"]) {
+        await expect(page.locator(`#${id}`)).toBeAttached();
+      }
+
+      // Dynamic renderers actually fired
+      await expect(page.locator(".ticker-item").first()).toBeAttached();
+      await expect(page.locator(".glance").first()).toBeVisible();
       await expect(page.locator("#timeline .t-item").first()).toBeVisible();
-      await expect(page.locator("#education-grid .project").first()).toBeVisible();
+      await expect(page.locator("#eduCard .edu-school")).toContainText(/Binghamton University/);
+      await expect(page.locator("#casesGrid .case").first()).toBeVisible();
       await expect(page.locator("#skillsGrid .skill-cluster").first()).toBeVisible();
-      await expect(page.locator("#socials a").first()).toBeVisible();
+      await expect(page.locator("#themesGrid .theme").first()).toBeVisible();
+      await expect(page.locator("#availabilityList div").first()).toBeVisible();
 
-      // External links present
-      const linkedin = page.locator('a[href*="linkedin.com/in/veeraravichandran"]').first();
-      const github = page.locator('a[href*="github.com/vrchandran12-dev"]').first();
-      await expect(linkedin).toBeVisible();
-      await expect(github).toBeVisible();
+      // Real signal: BCG and Goldman both present in case work
+      await expect(page.locator("#casesGrid")).toContainText(/BCG/i);
+      await expect(page.locator("#casesGrid")).toContainText(/Goldman Sachs/i);
 
-      await page.screenshot({
-        path: `test-results/screenshot-${vp.name}-top.png`,
-        fullPage: false,
-      });
+      // External links
+      await expect(page.locator('a[href*="linkedin.com/in/veeraravichandran"]').first()).toBeVisible();
+      await expect(page.locator('a[href*="github.com/vrchandran12-dev"]').first()).toBeVisible();
+
+      await page.screenshot({ path: `test-results/screenshot-${vp.name}-top.png`, fullPage: false });
       // Force-reveal so the full-page snapshot reflects what a scrolling user sees
       await page.evaluate(() =>
         document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"))
       );
-      await page.waitForTimeout(800);
-      await page.screenshot({
-        path: `test-results/screenshot-${vp.name}-full.png`,
-        fullPage: true,
-      });
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: `test-results/screenshot-${vp.name}-full.png`, fullPage: true });
 
-      expect(consoleErrors, `console errors:\n${consoleErrors.join("\n")}`).toEqual([]);
-      expect(failedRequests, `failed requests:\n${failedRequests.join("\n")}`).toEqual([]);
+      expect(consoleErrors, `console:\n${consoleErrors.join("\n")}`).toEqual([]);
+      expect(failedRequests, `failed:\n${failedRequests.join("\n")}`).toEqual([]);
     });
 
-    test("theme toggle flips data-theme", async ({ page }) => {
+    test("theme toggle persists", async ({ page }) => {
       await page.goto("/");
       const html = page.locator("html");
-      const before = (await html.getAttribute("data-theme")) ?? "dark";
+      const before = (await html.getAttribute("data-theme")) ?? "light";
       await page.locator("#themeToggle").click();
       const after = await html.getAttribute("data-theme");
       expect(after).not.toBe(before);
+      await page.reload();
+      const persisted = await html.getAttribute("data-theme");
+      expect(persisted).toBe(after);
     });
 
-    test("nav anchors scroll to sections", async ({ page }) => {
+    test("nav anchors hit each section", async ({ page }) => {
       await page.goto("/");
-      const targets = ["about", "experience", "education", "skills", "contact"];
+      const targets = ["about", "experience", "education", "cases", "availability"];
       for (const id of targets) {
-        const link = page.locator(`.nav-links a[href="#${id}"]`);
-        if (vp.name === "mobile") {
-          // nav-links hidden on mobile; jump directly via scrollIntoView
+        const navLink = page.locator(`.nav-links a[href="#${id}"]`);
+        if (await navLink.isVisible()) {
+          await navLink.click();
+        } else {
           await page.evaluate(
             (i) => document.getElementById(i).scrollIntoView({ behavior: "instant", block: "start" }),
             id
           );
-        } else {
-          await link.click();
         }
         await page.waitForTimeout(250);
         await expect(page.locator(`#${id}`)).toBeInViewport({ ratio: 0.01 });
       }
+    });
+
+    test("animated counter reaches target", async ({ page }) => {
+      await page.goto("/");
+      const first = page.locator(".glance-num").first();
+      await first.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(1500);
+      const expected = await first.getAttribute("data-count");
+      const text = (await first.textContent()) || "";
+      expect(text).toContain(expected);
     });
   });
 }
