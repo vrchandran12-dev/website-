@@ -427,6 +427,18 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   color: var(--fg-mute);
 }
 .project-links a:hover { color: var(--accent); }
+.project-subtitle {
+  margin: 0 0 4px;
+  color: var(--fg);
+  font-size: 14px;
+  font-weight: 500;
+}
+.project-meta {
+  margin: 0 0 12px;
+  color: var(--fg-mute);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
 .project-tags {
   display: flex;
   flex-wrap: wrap;

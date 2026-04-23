@@ -28,13 +28,13 @@ for (const vp of VIEWPORTS) {
       await expect(page.locator(".title")).toContainText("Veera");
       await expect(page.locator("#about")).toBeVisible();
       await expect(page.locator("#experience")).toBeVisible();
-      await expect(page.locator("#projects")).toBeVisible();
+      await expect(page.locator("#education")).toBeVisible();
       await expect(page.locator("#skills")).toBeVisible();
       await expect(page.locator("#contact")).toBeVisible();
 
       // Dynamic sections actually rendered (content.js ran)
       await expect(page.locator("#timeline .t-item").first()).toBeVisible();
-      await expect(page.locator("#projects-grid .project").first()).toBeVisible();
+      await expect(page.locator("#education-grid .project").first()).toBeVisible();
       await expect(page.locator("#skillsGrid .skill-cluster").first()).toBeVisible();
       await expect(page.locator("#socials a").first()).toBeVisible();
 
@@ -73,7 +73,7 @@ for (const vp of VIEWPORTS) {
 
     test("nav anchors scroll to sections", async ({ page }) => {
       await page.goto("/");
-      const targets = ["about", "experience", "projects", "skills", "contact"];
+      const targets = ["about", "experience", "education", "skills", "contact"];
       for (const id of targets) {
         const link = page.locator(`.nav-links a[href="#${id}"]`);
         if (vp.name === "mobile") {

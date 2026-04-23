@@ -62,14 +62,16 @@
       .join("");
   }
 
-  // ---- Projects ----
-  const grid = document.getElementById("projects-grid");
-  if (grid && Array.isArray(C.projects)) {
-    grid.innerHTML = C.projects
+  // ---- Education & Certifications ----
+  const grid = document.getElementById("education-grid");
+  if (grid && Array.isArray(C.education)) {
+    grid.innerHTML = C.education
       .map(
         (p) => `
       <article class="project reveal">
         <h3>${escapeHtml(p.title || "")}</h3>
+        ${p.subtitle ? `<p class="project-subtitle">${escapeHtml(p.subtitle)}</p>` : ""}
+        ${p.meta ? `<p class="project-meta">${escapeHtml(p.meta)}</p>` : ""}
         ${
           Array.isArray(p.tags) && p.tags.length
             ? `<div class="project-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>`
